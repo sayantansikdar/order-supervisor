@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Node / Next
+node_modules/
+.next/
+out/
+.env.local
+tsconfig.tsbuildinfo
+
+# Databases (local SQLite runs)
+*.db
+*.db-shm
+*.db-wal
+
+# Misc
+.DS_Store
+*.log
+temporal.db
