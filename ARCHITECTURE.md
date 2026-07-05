@@ -17,7 +17,7 @@
                                                                       │
                                                             ┌─────────▼─────────┐
                                                             │ Agent runtime     │
-                                                            │ Claude ⟷ mock     │
+                                                            │                   │
                                                             └───────────────────┘
 ```
 
@@ -28,8 +28,9 @@
 - **Temporal worker** hosts the workflow and all **activities**. Activities are where
   every side effect lives (DB, LLM calls, tool simulation), keeping the workflow
   deterministic.
-- **PostgreSQL** is the source of truth for the UI: runs, timeline, memory, final
-  output. The workflow keeps only tiny in-memory control state.
+- **A SQL database** (PostgreSQL in production, SQLite for local dev — the code is
+  DB-agnostic via SQLAlchemy async) is the source of truth for the UI: runs, timeline,
+  memory, final output. The workflow keeps only tiny in-memory control state.
 
 ## The three agent triggers
 
@@ -91,7 +92,7 @@ Terminal states: `completed` (agent closed on a terminal order event),
 ## Long histories
 
 After `CONTINUE_AS_NEW_AFTER` agent turns the workflow calls `continue_as_new`,
-carrying only `run_id`/`order_id` (all real state is in Postgres), so a very
+carrying only `run_id`/`order_id` (all real state is in the database), so a very
 long-lived order never accumulates unbounded Temporal history.
 
 ## LLM strategy

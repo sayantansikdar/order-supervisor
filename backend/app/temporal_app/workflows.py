@@ -12,10 +12,13 @@ from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
     from . import activities
+    from ..config import get_settings
     from .shared import StartParams
 
 # After this many agent turns we continue-as-new to keep history bounded.
-CONTINUE_AS_NEW_AFTER = 200
+# Resolved at worker import (a deploy-time constant), configurable via
+# CONTINUE_AS_NEW_AFTER so the demo can trigger it quickly.
+CONTINUE_AS_NEW_AFTER = get_settings().continue_as_new_after
 
 _RETRY = RetryPolicy(maximum_attempts=3, initial_interval=timedelta(seconds=1))
 _TERMINAL = {"completed", "terminated", "failed"}

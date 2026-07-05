@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     # auto: use LLM only when a key is present; true: require it; false: always mock
     use_llm: str = "auto"
 
+    # After this many agent turns the workflow continues-as-new to bound history.
+    # Kept high for real use; lower it (e.g. 5) to demo continue_as_new quickly.
+    continue_as_new_after: int = 200
+
     @property
     def llm_enabled(self) -> bool:
         if self.use_llm.lower() == "false":
