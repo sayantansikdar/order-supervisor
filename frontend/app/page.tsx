@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api, Run, Supervisor, statusColor } from "../lib/api";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
   const [runs, setRuns] = useState<Run[]>([]);
   const [supId, setSupId] = useState("");
@@ -47,7 +49,7 @@ export default function Dashboard() {
       setOrderId("");
       setInstructions("");
       await refresh();
-      window.location.href = `/runs/${run.id}`;
+      router.push(`/run?id=${run.id}`);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -115,7 +117,7 @@ export default function Dashboard() {
           {runs.map((r) => (
             <Link
               key={r.id}
-              href={`/runs/${r.id}`}
+              href={`/run?id=${r.id}`}
               className="flex items-center justify-between rounded-lg border bg-white px-4 py-3 shadow-sm hover:border-slate-400"
             >
               <div>

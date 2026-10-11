@@ -14,6 +14,27 @@ to **sleep**, and when to **wake up later** to re-check the situation.
 
 > See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the design note.
 
+## 🌐 Live demo
+
+**[sayantansikdar.github.io/order-supervisor](https://sayantansikdar.github.io/order-supervisor/)**
+
+The hosted console is a static build (GitHub Pages, deployed by
+[`.github/workflows/pages.yml`](./.github/workflows/pages.yml)). Pages can't run
+FastAPI, Temporal or Postgres, so in demo mode `frontend/lib/demo.ts` stands in for
+them: it ports the workflow loop, the wake classifier, the deterministic agent policy
+and the mocked tools 1:1, and keeps state in `localStorage` so a run survives a page
+reload. A **⏩ Next wake-up** control skips the durable timer so you don't have to
+wait for it.
+
+Build the demo locally:
+
+```bash
+cd frontend
+STATIC_EXPORT=1 NEXT_PUBLIC_DEMO=1 npx next build   # → frontend/out
+```
+
+Run without those variables (as below) and the console talks to the real backend.
+
 ---
 
 ## What it does
@@ -95,7 +116,7 @@ npm run dev                   # http://localhost:3000
    **Supervisors** tab; create your own there too).
 2. On **Runs**, pick a supervisor, optionally add run instructions such as
    *"If shipment is delayed, escalate immediately."*, and **Start run**.
-3. You land on the run page. Watch the agent's **start** turn, its memory, and the
+3. You land on the run page (`/run?id=…`). Watch the agent's **start** turn, its memory, and the
    **next wake-up** timer. It goes to **sleep**.
 4. **Inject events** (buttons): `payment_failed`, `shipment_delayed`,
    `customer_message_received`, … Watch the classifier decide wake-vs-defer, the agent

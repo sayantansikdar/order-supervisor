@@ -1,20 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import {
   api,
+  DEMO,
   EVENT_TYPES,
   RunDetail,
   kindColor,
   statusColor,
-} from "../../../lib/api";
+} from "../../lib/api";
+import { demoApi } from "../../lib/demo";
 
 const TERMINAL = ["completed", "terminated", "failed"];
 
 export default function RunPage() {
-  const { runId } = useParams<{ runId: string }>();
+  return (
+    <Suspense fallback={<p className="text-sm text-slate-500">Loading run…</p>}>
+      <RunView />
+    </Suspense>
+  );
+}
+
+function RunView() {
+  const runId = useSearchParams().get("id") || "";
   const [run, setRun] = useState<RunDetail | null>(null);
   const [instruction, setInstruction] = useState("");
   const [busy, setBusy] = useState(false);
@@ -108,6 +118,16 @@ export default function RunPage() {
               >
                 Resume
               </button>
+              {DEMO && (
+                <button
+                  disabled={busy || terminal || run.sleep_state !== "sleeping"}
+                  onClick={() => act(() => demoApi.fastForward(run.id))}
+                  title="Demo only: skip the durable timer and wake the agent now"
+                  className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-sm text-indigo-700 disabled:opacity-40"
+                >
+                  ⏩ Next wake-up
+                </button>
+              )}
               <button
                 disabled={busy || terminal}
                 onClick={() => act(() => api.control(run.id, "terminate"))}

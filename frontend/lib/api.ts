@@ -1,5 +1,10 @@
+import { demoApi } from "./demo";
+
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+
+/** Static builds (GitHub Pages) run against the in-browser demo backend. */
+export const DEMO = process.env.NEXT_PUBLIC_DEMO === "1";
 
 export type Supervisor = {
   id: string;
@@ -59,7 +64,7 @@ async function j<T>(res: Response): Promise<T> {
   return res.json();
 }
 
-export const api = {
+const httpApi = {
   listSupervisors: () =>
     fetch(`${API_BASE}/api/supervisors`, { cache: "no-store" }).then(j<Supervisor[]>),
   createSupervisor: (body: Partial<Supervisor>) =>
@@ -102,6 +107,8 @@ export const api = {
   control: (id: string, action: "interrupt" | "resume" | "terminate") =>
     fetch(`${API_BASE}/api/runs/${id}/${action}`, { method: "POST" }).then(j<Run>),
 };
+
+export const api: typeof httpApi = DEMO ? demoApi : httpApi;
 
 export const EVENT_TYPES = [
   "payment_confirmed",
